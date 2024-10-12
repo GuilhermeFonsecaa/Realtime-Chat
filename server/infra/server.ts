@@ -2,7 +2,8 @@ import express from "express"
 import dotenv from "dotenv"
 import cors from "cors"
 import cookieParser from "cookie-parser"
-import mongoose from "mongoose"
+import connectDatabase from "./database"
+import authRoutes from "../routes/AuthRoutes"
 
 dotenv.config();
 
@@ -19,12 +20,16 @@ app.use(cors({
 app.use(cookieParser())
 app.use(express.json())
 
-const server = app.listen(port, () => {
-    console.log("Server rodando");
-})
+//use routes
+app.use("/api/auth", authRoutes)
 
 if (!databaseURL) {
     throw new Error("DATABASE_URL não está definido");
 }
 
-mongoose.connect(databaseURL).then(() => console.log("Conectado ao banco de dados")).catch(error => console.log(error.message))
+connectDatabase(databaseURL);
+
+const server = app.listen(port, () => {
+    console.log("Server rodando");
+})
+
