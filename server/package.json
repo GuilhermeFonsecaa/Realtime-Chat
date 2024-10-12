@@ -5,7 +5,7 @@
   "scripts": {
     "build": "tsup src --format esm",
     "start": "node dist/server.mjs",
-    "dev": "tsx watch --env-file .env src/index.ts",
+    "dev": "tsx watch --env-file .env infra/server.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "type": "module",
@@ -27,6 +27,7 @@
     "@types/cookie-parser": "^1.4.7",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
+    "@types/jsonwebtoken": "^9.0.7",
     "@types/node": "^22.7.5",
     "nodemon": "^3.1.7",
     "ts-node": "^10.9.2",
