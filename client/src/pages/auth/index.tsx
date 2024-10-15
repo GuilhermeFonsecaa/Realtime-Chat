@@ -5,18 +5,21 @@ import { useForm } from "react-hook-form";
 import {
     Form,
     FormControl,
-    FormDescription,
     FormField,
     FormItem,
     FormLabel,
     FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { z } from "zod"
 import { Button } from "@/components/ui/button";
+import { RegisterSchema, registerSchemaType } from "@/schema/registerSchema";
+import { useMutation } from "@tanstack/react-query";
+import { signup } from "@/hooks/signup";
+import { toast } from "sonner";
+import { Loader, LoaderCircle } from "lucide-react"
+import { login } from "@/hooks/login";
 
 const Auth = () => {
-
     const loginForm = useForm<loginSchemaType>({
         resolver: zodResolver(LoginSchema),
         defaultValues: {
@@ -25,13 +28,51 @@ const Auth = () => {
         }
     })
 
-    const onSubmitLogin = (values: loginSchemaType) => {
+    const registerForm = useForm<registerSchemaType>({
+        resolver: zodResolver(RegisterSchema),
+        defaultValues: {
+            email: "",
+            password: ""
+        }
+    })
 
+    //Signup
+    const mutationSignup = useMutation({
+        mutationFn: signup,
+        onSuccess: () => {
+            toast.success("Cadastro realizado com sucesso")
+        },
+        onError: (error: any) => {
+            if (error.response && error.response.data && error.response.data.message) {
+                toast.error(error.response.data.message);
+            }
+        }
+    })
+
+    const onSubmitSignup = (values: registerSchemaType) => {
+        mutationSignup.mutate(values);
+    }
+
+    //Login
+    const mutationLogin = useMutation({
+        mutationFn: login,
+        onSuccess: () => {
+            toast.success("Login realizado com sucesso")
+        },
+        onError: (error: any) => {
+            if (error.response && error.response.data && error.response.data.message) {
+                toast.error(error.response.data.message);
+            }
+        }
+    })
+
+    const onSubmitLogin = (values: loginSchemaType) => {
+        mutationLogin.mutate(values);
     }
 
     return (
-        <div className="w-screen h-screen flex items-center justify-center">
-            <div className="w-[80vw] h-[80vh] bg-white border-2 border-white text-opacity-90 shadow-2xl md:w-[90vw] lg:w-[70vw] xl:w-[60vw] rounded-3xl grid xl:grid-cols-2">
+        <div className="w-screen h-screen flex items-center justify-center overflow-y-auto">
+            <div className="bg-white border-2 border-white text-opacity-90 shadow-2xl md:w-[90vw] lg:w-[70vw] lg:min-h-[80vh] lg:max-h-[95vh] xl:w-[60vw] rounded-3xl grid xl:grid-cols-2">
 
                 <div className="flex flex-col gap-10 items-center justify-center">
 
@@ -88,22 +129,22 @@ const Auth = () => {
                                                 </FormItem>
                                             )}
                                         />
-                                        <Button className="w-full bg-orange-500 h-10" type="submit">Iniciar sessão</Button>
+                                        <Button className="w-full bg-orange-500 hover:bg-orange-600 h-10" type="submit">{mutationLogin.isPending ? <LoaderCircle className="animate-spin" /> : "Iniciar Sessão"}</Button>
                                     </form>
                                 </Form>
                             </TabsContent>
 
-                            <TabsContent className="w-full mt-10" value="signup">
-                                <Form {...loginForm}>
-                                    <form onSubmit={loginForm.handleSubmit(onSubmitLogin)} className="space-y-8">
+                            <TabsContent className="w-full mt-8" value="signup">
+                                <Form {...registerForm}>
+                                    <form onSubmit={registerForm.handleSubmit(onSubmitSignup)} className="space-y-8 mb-5">
                                         <FormField
-                                            control={loginForm.control}
+                                            control={registerForm.control}
                                             name="email"
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel>Email</FormLabel>
                                                     <FormControl>
-                                                        <Input type="text" className="py-5" placeholder="Digite seu email" {...field} />
+                                                        <Input type="text" className="py-2" placeholder="Digite seu email" {...field} />
                                                     </FormControl>
 
                                                     <FormMessage />
@@ -112,19 +153,33 @@ const Auth = () => {
                                         />
 
                                         <FormField
-                                            control={loginForm.control}
+                                            control={registerForm.control}
                                             name="password"
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel>Senha</FormLabel>
                                                     <FormControl>
-                                                        <Input type="password" className="py-5" placeholder="Digite sua senha" {...field} />
+                                                        <Input type="password" className="py-2" placeholder="Digite sua senha" {...field} />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
                                             )}
                                         />
-                                       <Button className="w-full bg-orange-500 h-10" type="submit">Cadastrar</Button>
+
+                                        <FormField
+                                            control={registerForm.control}
+                                            name="confirmPassword"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>Confirmar senha</FormLabel>
+                                                    <FormControl>
+                                                        <Input type="password" className="py-2" placeholder="Confirme a senha" {...field} />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                        <Button className="w-full bg-orange-500 hover:bg-orange-600 h-10" type="submit">{mutationSignup.isPending ? <LoaderCircle className="animate-spin" /> : "Cadastrar"}</Button>
                                     </form>
                                 </Form>
                             </TabsContent>
