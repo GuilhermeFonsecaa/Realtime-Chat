@@ -20,7 +20,6 @@ app.use(cors({
 app.use(cookieParser())
 app.use(express.json())
 
-//use routes
 app.use("/api/auth", authRoutes)
 
 if (!databaseURL) {
