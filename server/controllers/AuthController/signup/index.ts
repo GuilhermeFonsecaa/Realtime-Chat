@@ -1,14 +1,14 @@
-import { compare } from "bcrypt";
+import { Response, Request } from "express"
 import User from "../../../models/UserModel";
 import { createToken, maxAge } from "../utils/createToken";
 
-export const signup = async (request: any, response: any) => {
+export const signup = async (request: Request, response: Response): Promise<any> => {
     try {
 
         const { email, password } = request.body;
 
         if (!email || !password) {
-            return response.status(400).json({message:"Email e senha são obrigatórios"})
+            return response.status(400).json({ message: "Email e senha são obrigatórios" })
         }
 
         const verificationEmail = await User.findOne({ email })
@@ -36,6 +36,6 @@ export const signup = async (request: any, response: any) => {
     }
     catch (error) {
         console.log({ error });
-        return response.status(500).json({ message: "Erro do Servidor"});
+        return response.status(500).json({ message: "Erro do Servidor" });
     }
 }

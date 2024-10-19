@@ -2,16 +2,25 @@
   "$schema": "https://json.schemastore.org/tsconfig",
   "display": "Node 20",
   "_version": "20.1.0",
-
- "compilerOptions": {
-    "target": "es6",
-    "module": "commonjs",
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "CommonJS",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "outDir": "./dist"
+    "outDir": "./dist",
+    "typeRoots": [
+      "./node_modules/@types",
+      "./@types"
+    ]
   },
-  "include": ["infra"],
-  "exclude": ["node_modules"]
+  "include": [
+    "infra",
+    "src/**/*", // Inclua seus arquivos de código
+    "./express.d.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

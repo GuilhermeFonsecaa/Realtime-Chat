@@ -33,7 +33,7 @@ const userSchema = new mongoose.Schema({
     },
 });
 
-// função que será executada antes de o documento ser salvo no banco de dados
+// função que será executada antes de o user ser salvo no banco de dados
 userSchema.pre("save", async function (next) {
     const salt = await genSalt(); //valor aleatório para tornar a senha mais segura
     this.password = await hash(this.password, salt); //criptografia da senha

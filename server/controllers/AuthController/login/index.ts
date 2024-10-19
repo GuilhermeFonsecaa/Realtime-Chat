@@ -1,8 +1,9 @@
+import { Request, Response } from "express";
 import { compare } from "bcrypt";
 import User from "../../../models/UserModel";
 import { createToken, maxAge } from "../utils/createToken";
 
-export const login = async (request: any, response: any) => {
+export const login = async (request: Request, response: Response): Promise<any> => {
     try {
 
         const { email, password } = request.body;
@@ -14,13 +15,13 @@ export const login = async (request: any, response: any) => {
         const user = await User.findOne({ email });
 
         if (!user) {
-            return response.status(400).json({message:"Usuário com o e-mail fornecido não foi encontrado."})
+            return response.status(400).json({ message: "Usuário com o e-mail fornecido não foi encontrado." })
         }
 
         const auth = await compare(password, user.password)
 
         if (!auth) {
-            return response.status(400).json({message:"Senha incorreta"})
+            return response.status(400).json({ message: "Senha incorreta" })
         }
 
         const token = createToken({ email: user.email, userId: user.id })
