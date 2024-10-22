@@ -16,10 +16,15 @@ import { RegisterSchema, registerSchemaType } from "@/schema/registerSchema";
 import { useMutation } from "@tanstack/react-query";
 import { signup } from "@/hooks/signup";
 import { toast } from "sonner";
-import { Loader, LoaderCircle } from "lucide-react"
+import { LoaderCircle } from "lucide-react"
 import { login } from "@/hooks/login";
+import { useNavigate } from "react-router-dom";
+import { useAppStore } from "@/store";
 
 const Auth = () => {
+    const navigate = useNavigate();
+    const { setUserInfo } = useAppStore();
+
     const loginForm = useForm<loginSchemaType>({
         resolver: zodResolver(LoginSchema),
         defaultValues: {
@@ -39,8 +44,11 @@ const Auth = () => {
     //Signup
     const mutationSignup = useMutation({
         mutationFn: signup,
-        onSuccess: () => {
+        onSuccess: (response) => {
+            setUserInfo(response.data.user)
             toast.success("Cadastro realizado com sucesso")
+            navigate("/profile");
+
         },
         onError: (error: any) => {
             if (error.response && error.response.data && error.response.data.message) {
@@ -56,8 +64,17 @@ const Auth = () => {
     //Login
     const mutationLogin = useMutation({
         mutationFn: login,
-        onSuccess: () => {
-            toast.success("Login realizado com sucesso")
+        onSuccess: (response) => {
+            if (response.status === 201 && response.data.user.id) {
+                setUserInfo(response.data.user)
+                if (response.data.user.profileSetup) {
+                    navigate("/chat");
+                }
+                else {
+                    navigate("/profile")
+                }
+            }
+            toast.success("Login realizado com sucesso");
         },
         onError: (error: any) => {
             if (error.response && error.response.data && error.response.data.message) {
@@ -72,14 +89,14 @@ const Auth = () => {
 
     return (
         <div className="w-screen h-screen flex items-center justify-center overflow-y-auto">
-            <div className="bg-white border-2 border-white text-opacity-90 shadow-2xl md:w-[90vw] lg:w-[70vw] lg:min-h-[80vh] lg:max-h-[95vh] xl:w-[60vw] rounded-3xl grid xl:grid-cols-2">
+            <div className="2xl:gap-10 bg-white border-2 border-white text-opacity-90 shadow-2xl md:w-[90vw] lg:w-[70vw] xl:w-[80vw] 2xl:w-[80vw] lg:min-h-[80vh] lg:max-h-[95vh] rounded-3xl xl:grid xl:grid-cols-2 2xl:grid-cols-2 ">
 
-                <div className="flex flex-col gap-10 items-center justify-center">
+                <div className="flex flex-col gap-8 items-center justify-center xl:ml-14 2xl:ml-8">
 
                     <div className="flex flex-col items-center justify-center">
                         <div className="flex items-center justify-center">
-                            <h1 className="flex text-5xl font-bold md:text-6xl">Bem Vindo</h1>
-                            <img src="./victory.svg" alt="" className="h-[100px]" />
+                            <h1 className="flex font-bold md:text-6xl xl:text-4xl 2xl:text-6xl">Bem Vindo</h1>
+                            <img src="./victory.svg" alt="" className="h-[100px] xl:h-[80px] 2xl:h-[100px]" />
                         </div>
                         <p className="font-medium text-center">
                             Faça login, para começar com o melhor aplicativo de bate-papo
@@ -88,7 +105,7 @@ const Auth = () => {
 
                     <div className="flex items-center justify-center w-full">
                         <Tabs defaultValue="login" className="flex flex-col items-center justify-center">
-                            <TabsList className="w-[600px] gap-2">
+                            <TabsList className="md:w-[600px] xl:w-[500px] 2xl:w-[650px] gap-2">
                                 <TabsTrigger
                                     className="w-[50%] data-[state=active]:bg-white data-[state=active]:font-semibold data-[state=active]:border-b-orange-500 text-black text-opacity-90 border-b-2 p-3 transition-all duration-300"
                                     value="login">
@@ -134,9 +151,9 @@ const Auth = () => {
                                 </Form>
                             </TabsContent>
 
-                            <TabsContent className="w-full mt-8" value="signup">
+                            <TabsContent className="w-full mt-8 xl:mt-5 2xl:mt-8" value="signup">
                                 <Form {...registerForm}>
-                                    <form onSubmit={registerForm.handleSubmit(onSubmitSignup)} className="space-y-8 mb-5">
+                                    <form onSubmit={registerForm.handleSubmit(onSubmitSignup)} className="xl:space-y-5 2xl:space-y-8 space-y-8 mb-5">
                                         <FormField
                                             control={registerForm.control}
                                             name="email"
@@ -187,6 +204,11 @@ const Auth = () => {
                     </div>
                 </div>
 
+                <div className="2xl:block xl:block hidden w-full h-full">
+                    <div className="flex items-center justify-end h-full">
+                    <img className="rounded-3xl xl:w-[390px] 2xl:w-[600px] h-full " src="/img_login.png" alt="" />
+                    </div>
+                </div>
             </div>
         </div>
     );
