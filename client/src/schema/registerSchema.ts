@@ -8,7 +8,7 @@ export const RegisterSchema = z.object({
         .regex(/[A-Z]/, "A senha deve conter pelo menos uma letra maiúscula")
         .regex(/\d/, "A senha deve conter pelo menos um número")
         .regex(/[@$!%*?&]/, "A senha deve conter pelo menos um caractere especial"),
-    confirmPassword: z.string(),
+    confirmPassword: z.string({message: "Confirmação de senha é obrigatório"}),
 }).refine((data) => data.password === data.confirmPassword, {
     message: "As senhas devem coincidir",
     path: ["confirmPassword"],
