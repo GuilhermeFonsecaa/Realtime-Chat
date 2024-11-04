@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken"
 
 interface createTokenProps {
     email: string;
-    userId: number;
+    userId: string;
 }
 
 export const maxAge = 3 * 24 * 60 * 60 * 1000;
