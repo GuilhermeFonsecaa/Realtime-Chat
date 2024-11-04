@@ -31,6 +31,7 @@ function App() {
   const { data, isLoading, isError } = useQuery({
     queryKey: ["userInfo"],
     queryFn: getUserData,
+    retry: false
   });
 
   useEffect(() => {
@@ -41,7 +42,7 @@ function App() {
     if (data) {
       setUserInfo(data);
     }
-  }, [data,isError,setUserInfo]);
+  }, [data, isError, setUserInfo]);
 
 
   if (isLoading) {
