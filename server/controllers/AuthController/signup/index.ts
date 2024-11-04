@@ -2,19 +2,19 @@ import { Response, Request } from "express"
 import User from "../../../models/UserModel";
 import { createToken, maxAge } from "../utils/createToken";
 
-export const signup = async (request: Request, response: Response): Promise<any> => {
+export const signup = async (request: Request, response: Response) => {
     try {
 
         const { email, password } = request.body;
 
         if (!email || !password) {
-            return response.status(400).json({ message: "Email e senha são obrigatórios" })
+            response.status(400).json({ message: "Email e senha são obrigatórios" })
         }
 
         const verificationEmail = await User.findOne({ email })
 
         if (verificationEmail) {
-            return response.status(400).json({ message: "Já existe um usuário com este e-mail" });
+            response.status(400).json({ message: "Já existe um usuário com este e-mail" });
         }
 
         const user = await User.create({ email, password });
@@ -26,7 +26,7 @@ export const signup = async (request: Request, response: Response): Promise<any>
             sameSite: "none"
         })
 
-        return response.status(201).json({
+        response.status(201).json({
             user: {
                 id: user.id,
                 email: user.email,
@@ -36,6 +36,6 @@ export const signup = async (request: Request, response: Response): Promise<any>
     }
     catch (error) {
         console.log({ error });
-        return response.status(500).json({ message: "Erro do Servidor" });
+        response.status(500).json({ message: "Erro do Servidor" });
     }
 }
