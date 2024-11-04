@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Form, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { addProfileImage } from "@/hooks/addProfileImage";
+import { removeProfileImage } from "@/hooks/removeProfileImage";
 import { updateProfile } from "@/hooks/updateProfile";
 import { colors, getColor } from "@/lib/utils";
 import { profileSchema, profileSchemaType } from "@/schema/profileSchema";
@@ -12,14 +13,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { AvatarImage } from "@radix-ui/react-avatar";
 import { useMutation } from "@tanstack/react-query";
 import { ArrowLeft, LoaderCircle, Plus, Trash } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 const Profile = () => {
     const { userInfo, setUserInfo } = useAppStore();
-    const [image, setImage] = useState<string>("");
     const [hovered, setHovered] = useState(false);
     const navigate = useNavigate();
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -39,7 +39,7 @@ const Profile = () => {
         mutationKey: ["updateProfile"],
         onSuccess: () => {
             toast.success("Perfil atualizado com sucesso", { className: "bg-emerald-500 text-white", closeButton: false });
-            userInfo && setUserInfo({ email: userInfo.email, password: userInfo.password, firstName: profileForm.getValues("firstName"), lastName: profileForm.getValues("lastName"), color: profileForm.getValues("color"), profileSetup: true })
+            userInfo && setUserInfo({ ...userInfo, firstName: profileForm.getValues("firstName"), lastName: profileForm.getValues("lastName"), color: profileForm.getValues("color"), profileSetup: true })
             navigate("/chat");
         },
 
@@ -62,9 +62,10 @@ const Profile = () => {
     const mutationAddProfileImage = useMutation({
         mutationFn: addProfileImage,
         mutationKey: ["addProfileImage"],
-        onSuccess: () => {
-            toast.success("Imagem atualizado com sucesso", { className: "bg-emerald-500 text-white", closeButton: false });
-            userInfo && setUserInfo({ email: userInfo.email, password: userInfo.password, firstName: profileForm.getValues("firstName"), lastName: profileForm.getValues("lastName"), color: profileForm.getValues("color"), profileSetup: true, image: image })
+        onSuccess: (response) => {
+            const imageUrl = `${HOST}/${response}`;
+            toast.success("Imagem atualizada com sucesso", { className: "bg-emerald-500 text-white", closeButton: false });
+            userInfo && setUserInfo({ ...userInfo, image: imageUrl })
         },
 
         onError: (error: any) => {
@@ -73,7 +74,6 @@ const Profile = () => {
             }
         }
     })
-
 
     const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const files = event.target.files;
@@ -86,19 +86,31 @@ const Profile = () => {
 
             const reader = new FileReader();
             reader.onload = () => {
-                setImage(reader.result as string) // Define o estado 'image' com o resultado da leitura (que é um URL de dados da imagem)
+               userInfo && setUserInfo({...userInfo, image: reader.result as string}) // Define o estado 'image' com o resultado da leitura (que é um URL de dados da imagem)
             }
             reader.readAsDataURL(files[0]); // Inicia a leitura do arquivo como uma URL de dados
         }
     };
 
-    const handleDeleteImage = async () => { };
+    const mutationRemoveProfileImage = useMutation({
+        mutationFn: removeProfileImage,
+        mutationKey: ["removeProfileImage"],
+        onSuccess: () => {
+            toast.success("Imagem removida com sucesso", { className: "bg-emerald-500 text-white", closeButton: false });
+            userInfo && setUserInfo({ ...userInfo, image: undefined })
+        },
+        onError: (error: any) => {
+            if (error.response && error.response.data) {
+                toast.error(error.response.data);
+            }
+        }
+    })
 
+    const handleDeleteImage = async () => {
+        mutationRemoveProfileImage.mutate()
+    };
 
-    useEffect(() => {
-        if (userInfo && userInfo.image)
-            setImage(`${HOST}/${userInfo?.image}`)
-    }, [setImage])
+    console.log(userInfo?.image)
 
     return (
         <div className="h-screen flex items-center justify-center flex-col gap-10 bg-[#1b1c24]">
@@ -109,8 +121,8 @@ const Profile = () => {
                 <div className="grid grid-cols-2">
                     <div className="w-32 md:w-48 relative flex items-center justify-center" onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}>
                         <Avatar className="h-32 w-32 md:w-48 md:h-48 rounded-full overflow-hidden">
-                            {image ?
-                                <AvatarImage src={image} alt="profile" className="object-cover w-full h-full" /> :
+                            {userInfo?.image ?
+                                <AvatarImage src={userInfo.image} alt="profile" className="object-cover w-full h-full" /> :
                                 <div className={`flex items-center justify-center uppercase h-32 w-32 md:w-48 md:h-48 text-5xl border-[1px] rounded-full ${getColor(profileForm.watch("color"))}`}>
                                     {profileForm && profileForm.watch("firstName")
                                         ? profileForm.watch("firstName").split("").shift()
@@ -119,9 +131,9 @@ const Profile = () => {
                             }
                         </Avatar>
                         {hovered && (
-                            <div className="absolute inset-0 flex items-center justify-center bg-slate-900/50 ring-fuchsia-50 rounded-full" onClick={image ? handleDeleteImage : handleFileInputClick}>
+                            <div className="absolute inset-0 flex items-center justify-center bg-slate-900/50 ring-fuchsia-50 rounded-full" onClick={userInfo?.image ? handleDeleteImage : handleFileInputClick}>
                                 {
-                                    image ? <Trash className="text-white text-3xl cursor-pointer" /> : <Plus className="text-white cursor-pointer" size={50} />
+                                    userInfo?.image ? <Trash className="text-white text-3xl cursor-pointer" /> : <Plus className="text-white cursor-pointer" size={50} />
                                 }
                             </div>
                         )}
@@ -189,7 +201,7 @@ const Profile = () => {
                                     )}
                                 />
                                 <div className="w-full mt-5">
-                                    <Button type="submit" className={`h-16 w-[300px] ${colors[profileForm.watch("color")]} hover:opacity-70 hover:${colors[profileForm.watch("color")]} transition-all duration-300`}>
+                                    <Button disabled={mutationUpdateProfile.isPending} type="submit" className={`h-16 w-[300px] ${colors[profileForm.watch("color")]} hover:opacity-70 hover:${colors[profileForm.watch("color")]} transition-all duration-300`}>
                                         {mutationUpdateProfile.isPending ? <LoaderCircle className="animate-spin" /> : "Salvar Perfil"}
                                     </Button>
                                 </div>

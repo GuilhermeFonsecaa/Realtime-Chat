@@ -146,7 +146,7 @@ const Auth = () => {
                                                 </FormItem>
                                             )}
                                         />
-                                        <Button className="w-full bg-orange-500 hover:bg-orange-600 h-10" type="submit">{mutationLogin.isPending ? <LoaderCircle className="animate-spin" /> : "Iniciar Sessão"}</Button>
+                                        <Button disabled={mutationLogin.isPending} className="w-full bg-orange-500 hover:bg-orange-600 h-10" type="submit">{mutationLogin.isPending ? <LoaderCircle className="animate-spin" /> : "Iniciar Sessão"}</Button>
                                     </form>
                                 </Form>
                             </TabsContent>
@@ -196,7 +196,7 @@ const Auth = () => {
                                                 </FormItem>
                                             )}
                                         />
-                                        <Button className="w-full bg-orange-500 hover:bg-orange-600 h-10" type="submit">{mutationSignup.isPending ? <LoaderCircle className="animate-spin" /> : "Cadastrar"}</Button>
+                                        <Button disabled={mutationSignup.isPending} className="w-full bg-orange-500 hover:bg-orange-600 h-10" type="submit">{mutationSignup.isPending ? <LoaderCircle className="animate-spin" /> : "Cadastrar"}</Button>
                                     </form>
                                 </Form>
                             </TabsContent>
