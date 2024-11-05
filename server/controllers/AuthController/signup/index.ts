@@ -35,7 +35,6 @@ export const signup = async (request: Request, response: Response) => {
         })
     }
     catch (error) {
-        console.log({ error });
         response.status(500).json({ message: "Erro do Servidor" });
     }
 }

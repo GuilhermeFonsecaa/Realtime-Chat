@@ -16,7 +16,7 @@ export const addProfileImage = async (request: Request, response: Response) => {
         const updateUser = await User.findOneAndUpdate(
             { _id: request.userId },
             { image: fileName },
-            { new: true, runValidartors: true }); //id:busca / image:campo a ser atualizado / new: retorna o documento atualizado após a operação, runValidator: Mongoose executa as validações definidas no esquema do modelo antes de aplicar a atualização
+            { new: true, runValidators: true }); //id:busca / image:campo a ser atualizado / new: retorna o documento atualizado após a operação, runValidator: Mongoose executa as validações definidas no esquema do modelo antes de aplicar a atualização
 
         response.status(200).json({
             image: updateUser?.image

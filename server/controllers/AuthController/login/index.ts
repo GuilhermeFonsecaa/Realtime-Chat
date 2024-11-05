@@ -26,7 +26,7 @@ export const login = async (request: Request, response: Response) => {
         const auth = await compare(password, user.password);
 
         if (!auth) {
-            response.status(400).json({ message: "Senha incorreta" });
+            response.status(400).json({ message: "Credenciais inválidas" });
             return;
         }
 
