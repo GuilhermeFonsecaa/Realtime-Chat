@@ -38,7 +38,7 @@ const Profile = () => {
         mutationFn: updateProfile,
         mutationKey: ["updateProfile"],
         onSuccess: () => {
-            toast.success("Perfil atualizado com sucesso", { className: "bg-emerald-500 text-white", closeButton: false });
+            toast.success("Perfil atualizado com sucesso", { className: "bg-orange-500 text-white", closeButton: false });
             userInfo && setUserInfo({ ...userInfo, firstName: profileForm.getValues("firstName"), lastName: profileForm.getValues("lastName"), color: profileForm.getValues("color"), profileSetup: true })
             navigate("/chat");
         },
@@ -64,7 +64,7 @@ const Profile = () => {
         mutationKey: ["addProfileImage"],
         onSuccess: (response) => {
             const imageUrl = `${HOST}/${response}`;
-            toast.success("Imagem atualizada com sucesso", { className: "bg-emerald-500 text-white", closeButton: false });
+            toast.success("Imagem atualizada com sucesso", { className: "bg-orange-500 text-white", closeButton: false });
             userInfo && setUserInfo({ ...userInfo, image: imageUrl })
         },
 
@@ -96,7 +96,7 @@ const Profile = () => {
         mutationFn: removeProfileImage,
         mutationKey: ["removeProfileImage"],
         onSuccess: () => {
-            toast.success("Imagem removida com sucesso", { className: "bg-emerald-500 text-white", closeButton: false });
+            toast.success("Imagem removida com sucesso", { className: "bg-orange-500 text-white", closeButton: false });
             userInfo && setUserInfo({ ...userInfo, image: undefined })
         },
         onError: (error: any) => {
@@ -109,8 +109,6 @@ const Profile = () => {
     const handleDeleteImage = async () => {
         mutationRemoveProfileImage.mutate()
     };
-
-    console.log(userInfo?.image)
 
     return (
         <div className="h-screen flex items-center justify-center flex-col gap-10 bg-[#1b1c24]">

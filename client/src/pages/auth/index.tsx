@@ -74,7 +74,7 @@ const Auth = () => {
                     navigate("/profile")
                 }
             }
-            toast.success("Login realizado com sucesso");
+            toast.success("Login realizado com sucesso", {className: "bg-orange-500 text-white"});
         },
         onError: (error: any) => {
             if (error.response && error.response.data && error.response.data.message) {

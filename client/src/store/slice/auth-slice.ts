@@ -11,13 +11,13 @@ interface UserInfo {
 }
 
 export interface AuthSlice {
-    userInfo: UserInfo | undefined;
-    setUserInfo: (userInfo: UserInfo | undefined) => void;
+    userInfo: UserInfo | null;
+    setUserInfo: (userInfo: UserInfo | null) => void;
 }
 
 export const createAuthSlice: StateCreator<AuthSlice> = (set) => (
     {
-        userInfo: undefined,
+        userInfo: null,
         setUserInfo: (userInfo) => set({ userInfo }),
     }
 )
