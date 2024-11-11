@@ -2,13 +2,14 @@ import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Form, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { addProfileImage } from "@/hooks/addProfileImage";
 import { removeProfileImage } from "@/hooks/removeProfileImage";
 import { updateProfile } from "@/hooks/updateProfile";
 import { colors, getColor } from "@/lib/utils";
 import { profileSchema, profileSchemaType } from "@/schema/profileSchema";
 import { useAppStore } from "@/store";
-import { HOST } from "@/utils/constants";
+import { HOST, queryClient } from "@/utils/constants";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AvatarImage } from "@radix-ui/react-avatar";
 import { useMutation } from "@tanstack/react-query";
@@ -32,7 +33,9 @@ const Profile = () => {
             lastName: userInfo?.lastName,
             color: userInfo?.color || 0
         }
-    })
+    });
+
+
 
     const mutationUpdateProfile = useMutation({
         mutationFn: updateProfile,
@@ -41,6 +44,7 @@ const Profile = () => {
             toast.success("Perfil atualizado com sucesso", { className: "bg-orange-500 text-white", closeButton: false });
             userInfo && setUserInfo({ ...userInfo, firstName: profileForm.getValues("firstName"), lastName: profileForm.getValues("lastName"), color: profileForm.getValues("color"), profileSetup: true })
             navigate("/chat");
+            queryClient.invalidateQueries({queryKey: ["userInfo"]});
         },
 
         onError: (error: any) => {
@@ -66,6 +70,7 @@ const Profile = () => {
             const imageUrl = `${HOST}/${response}`;
             toast.success("Imagem atualizada com sucesso", { className: "bg-orange-500 text-white", closeButton: false });
             userInfo && setUserInfo({ ...userInfo, image: imageUrl })
+            queryClient.invalidateQueries({queryKey: ["userInfo"]});
         },
 
         onError: (error: any) => {
@@ -74,6 +79,8 @@ const Profile = () => {
             }
         }
     })
+
+    console.log(userInfo?.image)
 
     const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const files = event.target.files;
@@ -98,6 +105,7 @@ const Profile = () => {
         onSuccess: () => {
             toast.success("Imagem removida com sucesso", { className: "bg-orange-500 text-white", closeButton: false });
             userInfo && setUserInfo({ ...userInfo, image: undefined })
+            queryClient.invalidateQueries({queryKey: ["userInfo"]});
         },
         onError: (error: any) => {
             if (error.response && error.response.data) {
@@ -120,7 +128,7 @@ const Profile = () => {
                     <div className="w-32 md:w-48 relative flex items-center justify-center" onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}>
                         <Avatar className="h-32 w-32 md:w-48 md:h-48 rounded-full overflow-hidden">
                             {userInfo?.image ?
-                                <AvatarImage src={userInfo.image} alt="profile" className="object-cover w-full h-full" /> :
+                                <AvatarImage src={`${HOST}/${userInfo.image}`} alt="profile" className="object-cover w-full h-full" /> :
                                 <div className={`flex items-center justify-center uppercase h-32 w-32 md:w-48 md:h-48 text-5xl border-[1px] rounded-full ${getColor(profileForm.watch("color"))}`}>
                                     {profileForm && profileForm.watch("firstName")
                                         ? profileForm.watch("firstName").split("").shift()
@@ -179,8 +187,8 @@ const Profile = () => {
                                             <FormLabel className="text-gray-300">Cor:</FormLabel>
                                             <div className="w-full flex gap-5 mt-3 items-center justify-start">
                                                 {colors.map((color, index) => (
-                                                    <label key={index} className="cursor-pointer">
-                                                        <input
+                                                    <Label key={index} className="cursor-pointer">
+                                                        <Input
                                                             type="radio"
                                                             name="color"
                                                             value={index}
@@ -191,7 +199,7 @@ const Profile = () => {
                                                         <div
                                                             className={`h-8 w-8 rounded-full transition-all duration-300 ${color} ${profileForm.watch("color") === index ? "outline outline-white outline-4" : ""}`}
                                                         ></div>
-                                                    </label>
+                                                    </Label>
                                                 ))}
                                             </div>
                                             <FormMessage />

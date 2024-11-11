@@ -36,7 +36,7 @@ function App() {
 
   useEffect(() => {
     if (isError) {
-      setUserInfo(undefined)
+      setUserInfo(null)
     }
 
     if (data) {
