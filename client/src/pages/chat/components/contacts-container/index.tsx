@@ -1,5 +1,6 @@
 import Logo from "./components/logo";
 import NavigationTitle from "./components/navigation-title";
+import PrivateConversations from "./components/private-conversations";
 import ProfileInfo from "./components/profile-info";
 
 const ContactsContainer = () => {
@@ -10,6 +11,7 @@ const ContactsContainer = () => {
 
         <div className="flex items-center my-5 justify-between pr-10">
           <NavigationTitle text="Conversas Privadas" />
+          <PrivateConversations/>
         </div>
 
         <div className="flex items-center my-5 justify-between pr-10">
