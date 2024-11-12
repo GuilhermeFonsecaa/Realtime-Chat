@@ -3,7 +3,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import Auth from './pages/auth'
 import Chat from './pages/chat'
 import Profile from './pages/profile'
-import { useAppStore } from './store'
+import { useAuthStore } from './store'
 import { getUserData } from './hooks/getUserData'
 import { useQuery } from '@tanstack/react-query'
 import { ReactNode, useEffect } from 'react'
@@ -13,20 +13,20 @@ interface RouteProps {
 }
 
 const PrivateRoute = ({ children }: RouteProps) => {
-  const { userInfo } = useAppStore();
+  const { userInfo } = useAuthStore();
   const isAuthenticated = !!userInfo;
   return isAuthenticated ? children : <Navigate to="/auth" />
 }
 
 const AuthRoute = ({ children }: RouteProps) => {
-  const { userInfo } = useAppStore();
+  const { userInfo } = useAuthStore();
   const isAuthenticated = !!userInfo;
   return isAuthenticated ? <Navigate to="/chat" /> : children
 }
 ''
 
 function App() {
-  const { userInfo, setUserInfo } = useAppStore();
+  const { userInfo, setUserInfo } = useAuthStore();
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["userInfo"],

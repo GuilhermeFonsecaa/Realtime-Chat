@@ -19,11 +19,11 @@ import { toast } from "sonner";
 import { LoaderCircle } from "lucide-react"
 import { login } from "@/hooks/login";
 import { useNavigate } from "react-router-dom";
-import { useAppStore } from "@/store";
+import { useAuthStore } from "@/store";
 
 const Auth = () => {
     const navigate = useNavigate();
-    const { setUserInfo } = useAppStore();
+    const { setUserInfo } = useAuthStore();
 
     const loginForm = useForm<loginSchemaType>({
         resolver: zodResolver(LoginSchema),
