@@ -4,6 +4,7 @@ import cors from "cors"
 import cookieParser from "cookie-parser"
 import connectDatabase from "./database"
 import authRoutes from "../routes/AuthRoutes"
+import contactsRoutes from "../routes/ContactsRoute"
 
 dotenv.config();
 
@@ -22,6 +23,7 @@ app.use(express.json())
 app.use("/uploads/profiles", express.static("uploads/profiles")); //disponibiliza arquivos estáticos na rota
 
 app.use("/api/auth", authRoutes)
+app.use("/api/contacts", contactsRoutes)
 
 if (!databaseURL) {
     throw new Error("DATABASE_URL não está definido");
