@@ -1,6 +1,6 @@
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { getColor } from "@/lib/utils";
-import { useAppStore } from "@/store";
+import { useAuthStore } from "@/store";
 import { HOST } from "@/utils/constants";
 import {
     Tooltip,
@@ -16,7 +16,7 @@ import { toast } from "sonner";
 
 
 const ProfileInfo = () => {
-    const { userInfo, setUserInfo } = useAppStore();
+    const { userInfo, setUserInfo } = useAuthStore();
     const navigate = useNavigate();
 
 

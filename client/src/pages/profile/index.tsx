@@ -8,7 +8,7 @@ import { removeProfileImage } from "@/hooks/removeProfileImage";
 import { updateProfile } from "@/hooks/updateProfile";
 import { colors, getColor } from "@/lib/utils";
 import { profileSchema, profileSchemaType } from "@/schema/profileSchema";
-import { useAppStore } from "@/store";
+import { useAuthStore } from "@/store";
 import { HOST, queryClient } from "@/utils/constants";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AvatarImage } from "@radix-ui/react-avatar";
@@ -20,7 +20,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 const Profile = () => {
-    const { userInfo, setUserInfo } = useAppStore();
+    const { userInfo, setUserInfo } = useAuthStore();
     const [hovered, setHovered] = useState(false);
     const navigate = useNavigate();
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -41,7 +41,7 @@ const Profile = () => {
         mutationFn: updateProfile,
         mutationKey: ["updateProfile"],
         onSuccess: () => {
-            toast.success("Perfil atualizado com sucesso", { className: "bg-orange-500 text-white", closeButton: false });
+            toast.success("Perfil atualizado com sucesso", { className: "bg-orange-500 text-white"});
             userInfo && setUserInfo({ ...userInfo, firstName: profileForm.getValues("firstName"), lastName: profileForm.getValues("lastName"), color: profileForm.getValues("color"), profileSetup: true })
             navigate("/chat");
             queryClient.invalidateQueries({queryKey: ["userInfo"]});
@@ -68,7 +68,7 @@ const Profile = () => {
         mutationKey: ["addProfileImage"],
         onSuccess: (response) => {
             const imageUrl = `${HOST}/${response}`;
-            toast.success("Imagem atualizada com sucesso", { className: "bg-orange-500 text-white", closeButton: false });
+            toast.success("Imagem atualizada com sucesso", { className: "bg-orange-500 text-white"});
             userInfo && setUserInfo({ ...userInfo, image: imageUrl })
             queryClient.invalidateQueries({queryKey: ["userInfo"]});
         },
@@ -103,7 +103,7 @@ const Profile = () => {
         mutationFn: removeProfileImage,
         mutationKey: ["removeProfileImage"],
         onSuccess: () => {
-            toast.success("Imagem removida com sucesso", { className: "bg-orange-500 text-white", closeButton: false });
+            toast.success("Imagem removida com sucesso", { className: "bg-orange-500 text-white"});
             userInfo && setUserInfo({ ...userInfo, image: undefined })
             queryClient.invalidateQueries({queryKey: ["userInfo"]});
         },
