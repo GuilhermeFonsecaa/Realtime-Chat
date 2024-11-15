@@ -19,7 +19,7 @@ import { animationDefaultOptions, getColor } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { HOST } from "@/utils/constants";
-import { useAuthStore, useChatStore } from "@/store";
+import { useChatStore } from "@/store";
 import { useMutation } from "@tanstack/react-query";
 import { searchContacts } from "@/hooks/searchContacts";
 import { toast } from "sonner";
@@ -50,11 +50,10 @@ const PrivateConversations = () => {
         const value = e.target.value;
         setSearch(value);
         if (debounceTimeout) clearTimeout(debounceTimeout);
-
         // Define um novo timeout para buscar após um atraso
         const newTimeout = setTimeout(() => {
             mutationSearchContacts.mutate(value);
-        }, 1000); // Aguarda 500 ms após o último caractere digitado
+        }, 1000); // Aguarda 1s após o último caractere digitado
 
         setDebounceTimeout(newTimeout);
     }
@@ -83,7 +82,7 @@ const PrivateConversations = () => {
                     </TooltipProvider>
 
                 </DialogTrigger>
-                <DialogContent className="bg-[#181920] border-none text-white lg:w-[400px] lg:h-[400px] xl:w-[500px] xl:h-[500px] 2xl:min-w-[650px] 2xl:h-[650px] flex flex-col">
+                <DialogContent className="bg-[#181920] border-none text-white md:w-[400px] md:h-[400px] lg:w-[400px] lg:h-[400px] xl:w-[500px] xl:h-[500px] 2xl:min-w-[650px] 2xl:h-[650px] flex flex-col gap-8">
                     <DialogHeader>
                         <DialogTitle>Selecione um contato</DialogTitle>
                         <DialogDescription>
@@ -114,9 +113,9 @@ const PrivateConversations = () => {
                         </div>
                     </ScrollArea>
                     {searchedContacts.length <= 0 && (
-                        <div className="flex-1 md:bg-[#1c1d25] md:flex flex-col justify-center items-center hidden duration-1000 transition-all">
+                        <div className="flex-1 md:flex flex-col justify-center items-center hidden duration-1000 transition-all">
                             <Lottie isClickToPauseDisabled={true} height={150} width={150} options={animationDefaultOptions} />
-                            <div className="text-opacity-80 text-white flex flex-col gap-5 items-center lg:text-xl text-3xl transition-all duration-300 text-center">
+                            <div className="text-opacity-80 text-white flex flex-col gap-5 items-center md:text-base lg:text-xl xl:text-2xl mt-5 transition-all duration-300 text-center">
                                 <h3 className="poppins-medium">
                                     Olá <span className="text-orange-500">!</span> Pesquise um novo <span className="text-orange-500">Contato.</span>
                                 </h3>
