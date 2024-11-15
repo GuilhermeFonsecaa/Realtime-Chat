@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser"
 import connectDatabase from "./database"
 import authRoutes from "../routes/AuthRoutes"
 import contactsRoutes from "../routes/ContactsRoute"
+import setupSocket from "../socket"
 
 dotenv.config();
 
@@ -34,4 +35,6 @@ connectDatabase(databaseURL);
 const server = app.listen(port, () => {
     console.log("Server rodando");
 })
+
+setupSocket(server)
 
