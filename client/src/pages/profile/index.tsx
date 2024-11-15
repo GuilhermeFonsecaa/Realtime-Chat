@@ -118,11 +118,20 @@ const Profile = () => {
         mutationRemoveProfileImage.mutate()
     };
 
+    const navigationBackToChat = () => {
+        if(userInfo?.profileSetup){
+            navigate("/chat")
+        }
+        else{
+            toast.info("Complete a configuração inicial de seu perfil para continuar")
+        }
+    }
+
     return (
         <div className="h-screen flex items-center justify-center flex-col gap-10 bg-[#1b1c24]">
             <div className="flex flex-col gap-10 w-[80vw] md:w-max">
                 <div>
-                    <ArrowLeft className="text-4xl lg:text-6xl text-white/90 cursor-pointer" />
+                    <ArrowLeft className="text-4xl lg:text-6xl text-white/90 cursor-pointer" onClick={navigationBackToChat} />
                 </div>
                 <div className="grid grid-cols-2">
                     <div className="w-32 md:w-48 relative flex items-center justify-center" onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}>
