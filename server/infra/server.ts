@@ -5,7 +5,7 @@ import cookieParser from "cookie-parser"
 import connectDatabase from "./database"
 import authRoutes from "../routes/AuthRoutes"
 import contactsRoutes from "../routes/ContactsRoute"
-import setupSocket from "../socket"
+import setupSocket from "../socket/socket"
 
 dotenv.config();
 

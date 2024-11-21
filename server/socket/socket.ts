@@ -1,5 +1,7 @@
-import { Socket, Server as SocketIOServer } from "socket.io"
+import { Server as SocketIOServer } from "socket.io"
 import { Server as HTTPServer } from "http"
+import { sendMessage, sendMessageProps } from "./events/sendMessage"
+import { disconnect } from "./events/disconnect"
 
 //cria instancia do socketIoServer
 const setupSocket = (server: HTTPServer) => {
@@ -13,21 +15,10 @@ const setupSocket = (server: HTTPServer) => {
 
     const userSocketMap = new Map(); //map para associar userId aos sockets.id, permitindo encontrar o socket associado ao usuário
 
-    const disconnect = (socket: Socket) => {
-        console.log(`Cliente disconectado: ${socket.id}`);
-        //percorre o map buscando o socket.id desconectado, dps de encontrar deleta o userId associado
-        for (const [userId, socketId] of userSocketMap.entries()) {
-            if (socketId === socket.id) {
-                userSocketMap.delete(userId)
-                break;
-            }
-        }
-    }
-
+    //Para cada cliente conectado, o servidor cria um novo socket
     io.on("connection", (socket) => {
         const userId = socket.handshake.query.userId //userIds são passados pelo cliente para a conexão WebSocket
 
-        //se userId foi enviado armazena em userSocketMap
         if (userId) {
             userSocketMap.set(userId, socket.id);
             console.log(`Usuário conectado: ${userId} com socket ID : ${socket.id}`)
@@ -36,9 +27,19 @@ const setupSocket = (server: HTTPServer) => {
             console.log("User ID não fornecido durante a conexão")
         }
 
-        //quando um cliente se desconecta é removido do userSocketMap 
-        socket.on("disconnect", () => disconnect(socket))
-    })
+        socket.on("sendMessage", async (message: sendMessageProps) => {
+            try {
+                await sendMessage(message, userSocketMap, io);
+            }
+            catch (error) {
+                console.log("Erro ao enviar a mensagem", error);
+            }
+        }
+        )
+        socket.on("disconnect", () => disconnect(socket, userSocketMap))  //quando um cliente se desconecta é removido do userSocketMap 
+    });
+
 }
+
 
 export default setupSocket;

@@ -12,12 +12,12 @@ interface MessageSchemaProps {
 const messagesSchema = new mongoose.Schema<MessageSchemaProps>({
     sender: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Users",
+        ref: "Users", //armazena apenas o id do usuário recipient e a partir desse id consegue buscar em Users
         required: true
     },
     recipient: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Users",
+        ref: "Users", //armazena apenas o id do usuário recipient e a partir desse id consegue buscar em Users
         required: false
     },
     messageType: {
