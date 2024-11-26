@@ -1,42 +1,52 @@
-import { useAuthStore } from "@/store";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { io, Socket } from "socket.io-client";
+import { useAuthStore, useChatStore } from "@/store";
 import { HOST } from "@/utils/constants";
-import { createContext, useContext, useEffect, useRef } from "react";
-import { io, Socket } from "socket.io-client"
+import { Message } from "@/store/slice/chat-slice";
 
 const SocketContext = createContext<Socket | null>(null);
 
 export const useSocket = () => {
     return useContext(SocketContext);
-}
+};
 
 export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
-    const socket = useRef<Socket | null>(null);
+    const [socket, setSocket] = useState<Socket | null>(null);
     const { userInfo } = useAuthStore();
 
     useEffect(() => {
         if (userInfo) {
-            //cria a conexão WebSocket com o servidor
-            socket.current = io(HOST, {
+            const newSocket = io(HOST, {
                 withCredentials: true,
                 query: { userId: userInfo.id },
             });
+            setSocket(newSocket);
 
-            socket.current.on("connect", () => {
+            newSocket.on("connect", () => {
                 console.log("Conectado ao servidor socket");
             });
-            
-            //função de limpeza, só será executada se userInfo mudar
+
+            const handleReceiveMessage = (message: Message) => {
+                const { selectedChatData, selectedChatType, addMessage } = useChatStore.getState();
+                const senderId = typeof message.sender === "object" && message.sender !== null && message.sender._id;
+                const recipientId = typeof message.recipient === "object" && message.recipient !== null && message.recipient._id ;
+
+                if (
+                    (selectedChatType !== undefined && selectedChatData && selectedChatData._id === senderId) ||
+                    (selectedChatData && selectedChatData._id === recipientId)
+                ) {
+                    addMessage(message);
+                }
+            };
+
+            newSocket.on("recieveMessage", handleReceiveMessage);
+
             return () => {
-                socket.current?.disconnect();
-            }
+                newSocket.disconnect();
+                setSocket(null);
+            };
         }
     }, [userInfo]);
 
-
-    return (
-        <SocketContext.Provider value={socket.current}>
-            {children}
-        </SocketContext.Provider>
-    )
-
-}
+    return <SocketContext.Provider value={socket}>{children}</SocketContext.Provider>;
+};
