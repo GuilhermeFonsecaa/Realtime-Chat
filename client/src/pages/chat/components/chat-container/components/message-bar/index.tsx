@@ -8,23 +8,38 @@ import {
 import { Paperclip, SendHorizonal, SmilePlus } from "lucide-react";
 import { useRef, useState } from "react";
 import EmojiPicker, { Theme } from "emoji-picker-react"
+import { useAuthStore, useChatStore } from "@/store";
+import { useSocket } from "@/context/SocketContext";
 
 const MessageBar = () => {
-    const [message, setMessage] = useState<string>("")
+    const [message, setMessage] = useState<string>("");
+    const { selectedChatType, selectedChatData } = useChatStore();
+    const { userInfo } = useAuthStore();
+    const socket = useSocket()
 
     const handleAddEmoji = (emoji: { emoji: string }) => {
         setMessage((msg) => msg + emoji.emoji)
     }
 
     const handleMessage = () => {
-
+        console.log('Selected chat data:', selectedChatData?._id);
+        if (selectedChatType === "contact" && selectedChatData && userInfo) {
+            socket?.emit("sendMessage", {
+                sender: userInfo.id ,
+                content: message,
+                recipient: selectedChatData?._id ,
+                messageType: "text",
+                fileUrl: undefined
+            })
+            setMessage("");
+        }
     }
 
     return (
         <div className="h-[10vh] bg-[rgb(28,29,37)] flex justify-center items-center px-8 mb-6 gap-6">
 
             <div className="flex-1 flex bg-[#2a2b33] rounded-md items-center gap-5 ">
-                <Input type="text" className="flex-1 p-10 bg-transparent rounded-md focus:border-none focus:outline-none border-none" placeholder="Mensagem..." value={message} onChange={(e) => setMessage(e.target.value)} />
+                <Input type="text" className="flex-1 p-10 bg-transparent rounded-md focus:border-none focus:outline-none border-none" placeholder="Mensagem..." value={message} onChange={(e) => setMessage(e.target.value.trimStart())} required />
                 <Button className="text-neutral-500 focus:border-none focus:outline-none focus:text-white duration-300 transition-all bg-transparent hover:bg-transparent">
                     <Paperclip className="text-orange-400" size={23} />
                 </Button>

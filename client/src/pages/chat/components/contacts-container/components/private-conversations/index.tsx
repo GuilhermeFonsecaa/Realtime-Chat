@@ -25,12 +25,13 @@ import { searchContacts } from "@/hooks/searchContacts";
 import { toast } from "sonner";
 import { useState } from "react";
 import { UserInfo } from "@/store/slice/auth-slice";
+import { SelectedChatDataProps } from "@/store/slice/chat-slice";
 
 
 const PrivateConversations = () => {
     const { setSelectedChatType, setSelectedChatData } = useChatStore();
     const [search, setSearch] = useState<string>("")
-    const [searchedContacts, setSearchedContacts] = useState<UserInfo[]>([]);
+    const [searchedContacts, setSearchedContacts] = useState<SelectedChatDataProps[]>([]);
     const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(null);
     const [openDialog, setOpenDialog] = useState<boolean>(false)
 
@@ -58,7 +59,7 @@ const PrivateConversations = () => {
         setDebounceTimeout(newTimeout);
     }
 
-    const selectNewContact = (contact: UserInfo) => {
+    const selectNewContact = (contact: SelectedChatDataProps) => {
         setOpenDialog(false);
         setSearchedContacts([]);
         setSelectedChatType("contact");
@@ -93,7 +94,7 @@ const PrivateConversations = () => {
                     <ScrollArea>
                         <div className="flex flex-col gap-5">
                             {searchedContacts.map((contact) => (
-                                <div key={contact.id} className="flex gap-3 items-center cursor-pointer" onClick={() => selectNewContact(contact)}>
+                                <div key={contact._id} className="flex gap-3 items-center cursor-pointer" onClick={() => selectNewContact(contact)}>
                                     <div className="w-12 h-12 relative">
                                         <Avatar className="h-12 w-12 rounded-full overflow-hidden">
                                             {contact?.image ?
