@@ -4,7 +4,8 @@ import { Server as SocketIOServer } from "socket.io"
 
 export interface sendMessageProps {
     sender: mongoose.Schema.Types.ObjectId, //user.id de sender
-    recipient: mongoose.Schema.Types.ObjectId// user.id de recipient
+    recipient: mongoose.Schema.Types.ObjectId,// user.id de recipient
+    content: string
 }
 
 export const sendMessage = async (message: sendMessageProps, userSocketMap: Map<any, any>, io: SocketIOServer) => {
