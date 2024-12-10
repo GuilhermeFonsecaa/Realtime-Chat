@@ -25,6 +25,7 @@ app.use("/uploads/profiles", express.static("uploads/profiles")); //disponibiliz
 
 app.use("/api/auth", authRoutes)
 app.use("/api/contacts", contactsRoutes)
+app.use("api/messages", messagesRoutes)
 
 if (!databaseURL) {
     throw new Error("DATABASE_URL não está definido");
