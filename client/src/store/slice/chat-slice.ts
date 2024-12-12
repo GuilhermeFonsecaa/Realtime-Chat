@@ -1,5 +1,4 @@
 import { StateCreator } from "zustand";
-import { UserInfo } from "./auth-slice";
 
 export interface Message {
   _id: string

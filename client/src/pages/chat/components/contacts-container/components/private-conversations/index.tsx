@@ -24,7 +24,6 @@ import { useMutation } from "@tanstack/react-query";
 import { searchContacts } from "@/hooks/searchContacts";
 import { toast } from "sonner";
 import { useState } from "react";
-import { UserInfo } from "@/store/slice/auth-slice";
 import { SelectedChatDataProps } from "@/store/slice/chat-slice";
 
 
