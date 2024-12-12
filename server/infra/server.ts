@@ -6,6 +6,7 @@ import connectDatabase from "./database"
 import authRoutes from "../routes/AuthRoutes"
 import contactsRoutes from "../routes/ContactsRoute"
 import setupSocket from "../socket/socket"
+import messagesRoutes from "../routes/MessagesRoutes"
 
 dotenv.config();
 
@@ -25,7 +26,7 @@ app.use("/uploads/profiles", express.static("uploads/profiles")); //disponibiliz
 
 app.use("/api/auth", authRoutes)
 app.use("/api/contacts", contactsRoutes)
-app.use("api/messages", messagesRoutes)
+app.use("/api/messages", messagesRoutes)
 
 if (!databaseURL) {
     throw new Error("DATABASE_URL não está definido");

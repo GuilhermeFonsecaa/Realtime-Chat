@@ -18,7 +18,7 @@ export const getMessages = async (request: CustomRequest, response: Response) =>
             $or: [
                 {
                     sender: user1, recipient: user2
-                }, 
+                },
                 {
                     sender: user2, recipient: user1
                 }
@@ -26,7 +26,6 @@ export const getMessages = async (request: CustomRequest, response: Response) =>
         }).sort({ timestamp: 1 });
         response.status(200).json({ messages });
     }
-
     catch (error) {
         response.status(500).send("Internal Server Error")
     }
