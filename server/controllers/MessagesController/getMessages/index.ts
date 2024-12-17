@@ -1,11 +1,7 @@
 import { Request, Response } from "express";
 import Message from "../../../models/MessagesModel"
 
-interface CustomRequest extends Request {
-    userId?: string;
-}
-
-export const getMessages = async (request: CustomRequest, response: Response) => {
+export const getMessages = async (request: Request, response: Response) => {
     try {
         const user1 = request.userId;
         const user2 = request.body.id;
