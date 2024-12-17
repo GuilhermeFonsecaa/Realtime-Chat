@@ -8,7 +8,7 @@ import 'moment/locale/pt-br';
 import { useEffect } from "react";
 
 interface ApiResponse {
-    messages: Message[]; // Aqui 'messages' é um array de Message
+    messages: Message[]; 
 }
 
 const MessageContainer = () => {
