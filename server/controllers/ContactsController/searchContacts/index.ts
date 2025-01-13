@@ -24,7 +24,9 @@ export const searchContacts = async (request: Request, response: Response) => {
                     ],
                 },
             ],
-        });
+        },
+            "-password"
+        ).lean();
         response.status(200).json({ contacts });
     }
 

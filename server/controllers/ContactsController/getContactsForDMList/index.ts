@@ -24,12 +24,19 @@ export const getContactsForDMList = async (request: Request, response: Response)
                     _id: {
                         //condicional para determinar o campo a ser agrupado -> Se a mensagem foi enviada pelo usuário autenticado agrupa pelo campo recipient, caso contrário pelo campo sender
                         $cond: {
-                            if: { $eq: ["sender", userId] },
+                            if: { $eq: ["$sender", userId] },
                             then: "$recipient",
                             else: "$sender"
                         },
                     },
                     lastMessageTime: { $first: "$timestamp" }, //pega o valor do campo timestamp da primeira mensagem encontrada no grupo
+                },
+            },
+
+            {
+                // Exclui o próprio usuário da lista de contatos
+                $match: {
+                    _id: { $ne: userId },
                 },
             },
 
