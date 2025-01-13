@@ -6,16 +6,18 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover"
 import { Paperclip, SendHorizonal, SmilePlus } from "lucide-react";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import EmojiPicker, { Theme } from "emoji-picker-react"
 import { useAuthStore, useChatStore } from "@/store";
 import { useSocket } from "@/context/SocketContext";
+import { useQueryClient } from "@tanstack/react-query";
 
 const MessageBar = () => {
     const [message, setMessage] = useState<string>("");
     const { selectedChatType, selectedChatData } = useChatStore();
     const { userInfo } = useAuthStore();
     const socket = useSocket()
+    const queryClient = useQueryClient();
 
     const handleAddEmoji = (emoji: { emoji: string }) => {
         setMessage((msg) => msg + emoji.emoji)
@@ -32,6 +34,7 @@ const MessageBar = () => {
                 fileUrl: undefined
             })
             setMessage("");
+            queryClient.invalidateQueries({queryKey: ["get-contacts"]})
         }
     }
 
