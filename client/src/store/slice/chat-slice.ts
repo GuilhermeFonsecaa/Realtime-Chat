@@ -12,12 +12,11 @@ export interface Message {
 export interface SelectedChatDataProps {
   _id: string;
   email: string;
-  password: string;
-  firstName?: string;
-  lastName?: string;
+  firstName: string;
+  lastName: string;
   image?: string;
-  color?: number;
-  profileSetup: boolean;
+  color: number;
+  profileSetup?: boolean;
 }
 
 export interface ChatSlice {

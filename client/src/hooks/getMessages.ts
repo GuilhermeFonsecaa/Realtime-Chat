@@ -3,7 +3,7 @@ import { Message } from "@/store/slice/chat-slice";
 import { GET_ALL_MESSAGES_ROUTE } from "@/utils/constants"
 
 interface ApiResponse {
-    messages: Message[]; // Aqui 'messages' é um array de Message
+    messages: Message[];
   }
 
 export const getMessages = async (selectedChataDataId: string):Promise<ApiResponse> => {
