@@ -23,6 +23,7 @@ app.use(cors({
 app.use(cookieParser())
 app.use(express.json())
 app.use("/uploads/profiles", express.static("uploads/profiles")); //disponibiliza arquivos estáticos na rota
+app.use("uploads/files", express.static("uploads/files")) //disponibiliza arquivos estáticos na rota
 
 app.use("/api/auth", authRoutes)
 app.use("/api/contacts", contactsRoutes)
