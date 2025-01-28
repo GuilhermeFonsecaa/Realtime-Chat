@@ -8,6 +8,11 @@ const messagesRoutes = Router();
 
 const upload = multer({ dest: "uploads/files" })
 messagesRoutes.post("/get-messages", verifyToken, getMessages);
-messagesRoutes.post("/upload-file", verifyToken, uploadFile)
+messagesRoutes.post(
+    "/upload-file",
+    verifyToken,
+    upload.single("file"), // Processa o arquivo da requisição
+    uploadFile
+  );
 
 export default messagesRoutes;

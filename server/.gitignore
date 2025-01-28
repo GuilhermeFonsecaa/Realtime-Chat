@@ -20,3 +20,8 @@ build/
 .env.development.local
 .env.test.local
 .env.production.local
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.docx

@@ -3,17 +3,12 @@
   "display": "Node 20",
   "_version": "20.1.0",
   "compilerOptions": {
-    "target": "ESNext",
-    "module": "CommonJS",
-    "strict": true,
+    "module": "esnext",   // ou "node16" ou "es2020"
+    "target": "esnext",    // ou "es2020", conforme necessário
+    "moduleResolution": "node",
     "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "outDir": "./dist",
-    "typeRoots": [
-      "./node_modules/@types",
-      "./@types"
-    ]
+    "strict": true,
+    "skipLibCheck": true
   },
   "include": [
     "infra",
