@@ -7,6 +7,7 @@ export interface Message {
   sender: { _id: string } | string;
   timestamp: Date;
   messageType: string
+  fileUrl?: string
 }
 
 export interface SelectedChatDataProps {
