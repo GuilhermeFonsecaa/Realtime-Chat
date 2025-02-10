@@ -35,8 +35,8 @@ const MessageBar = () => {
                 messageType: "text",
                 fileUrl: undefined
             })
-            setMessage("");
             queryClient.invalidateQueries({ queryKey: ["get-contacts"] });
+            setMessage("");
         };
     };
 

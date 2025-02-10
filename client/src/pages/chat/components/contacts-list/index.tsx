@@ -41,7 +41,6 @@ const ContactsList = ({ contacts, isChannel }: ContactsListProps) => {
         }
     }
 
-
     return (
         <div className="mt-5">
             {Array.isArray(contacts) ? (
