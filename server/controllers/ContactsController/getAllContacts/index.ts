@@ -6,7 +6,8 @@ export const getAllContacts = async (request: Request, response: Response) => {
         const users = await User.find({ _id: { $ne: request.userId } }, "firstName lastName _id email"); //exclui o proprio id e quais campos quer na query
       
         const contacts = users.map((user) => ({
-            label: user.firstName ? `${user.firstName} ${user.lastName}` : user.email
+            label: user.firstName ? `${user.firstName} ${user.lastName}` : user.email,
+            value:user._id
         }))
        
         response.status(200).json({ contacts });
