@@ -6,17 +6,19 @@ import ProfileInfo from "./components/profile-info";
 import { getContacts } from "@/hooks/getContacts";
 import ContactsList from "../contacts-list";
 import { LoaderCircle } from "lucide-react";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import CreateChannel from "./components/create-channel";
 
 const ContactsContainer = () => {
 
   const { data, isLoading } = useQuery({
     queryKey: ["get-contacts"],
     queryFn: getContacts,
-});
+  });
 
-if (isLoading) {
-    return <div><LoaderCircle className="animate-spin"/></div>;
-}
+  if (isLoading) {
+    return <div><LoaderCircle className="animate-spin" /></div>;
+  }
 
 
   return (
@@ -29,13 +31,16 @@ if (isLoading) {
             <NavigationTitle text="Conversas Privadas" />
             <PrivateConversations />
           </div>
-          <div className="max-h-[38vh] overflow-y-auto scrollbar-hidden w-full">
-            <ContactsList contacts={data.contacts} isChannel={false} />
+          <div className="max-h-[38vh]  w-full">
+            <ScrollArea className="h-[240px] w-full">
+              <ContactsList contacts={data.contacts} isChannel={false} />
+            </ScrollArea>
           </div>
         </div>
 
         <div className="flex items-center my-5 justify-between pr-10">
           <NavigationTitle text="Grupos" />
+          <CreateChannel/>
         </div>
         <div>
           <ProfileInfo />

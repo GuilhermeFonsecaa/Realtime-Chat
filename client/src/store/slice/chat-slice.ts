@@ -28,6 +28,9 @@ export interface ChatSlice {
   setSelectedChatData: (selectedChatData: SelectedChatDataProps | undefined) => void;
   setSelectedChatMessages: (selectedChatMessages: Message[]) => void;
   closeChat: () => void;
+  channels: any[];
+  setChannels: (channel: any) => void;
+  addChannel: (channel: any) => void;
   addMessage: (message: Message) => void;
 }
 
@@ -39,6 +42,12 @@ export const createChatSlice: StateCreator<ChatSlice> = (set, get) => ({
   setSelectedChatData: (selectedChatData) => set({ selectedChatData }),
   setSelectedChatMessages: (selectedChatMessages) => set({ selectedChatMessages }),
   closeChat: () => set({ selectedChatData: undefined, selectedChatType: undefined }),
+  channels: [],
+  setChannels: (channels) => set({ channels }),
+  addChannel: (channel) => {
+    const channels = get().channels;
+    set({channels: [channel, ...channels]});
+  },
   addMessage: (message) => {
     const selectedChatMessages = get().selectedChatMessages;
     const selectedChatType = get().selectedChatType;
