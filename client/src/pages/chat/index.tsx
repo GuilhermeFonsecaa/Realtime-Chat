@@ -21,7 +21,7 @@ const Chat = () => {
     return (
         <div className="flex w-full h-screen text-white overflow-hidden">
             <ContactsContainer />
-            
+
             {/*se foi selecionado algum tipo de chat abrir ele se não deixa o componente de emptychatcontainer */}
             {selectedChatType === undefined ? (
                 <EmptyChatContainer />

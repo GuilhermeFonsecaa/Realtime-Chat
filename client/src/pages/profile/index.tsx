@@ -35,8 +35,6 @@ const Profile = () => {
         }
     });
 
-
-
     const mutationUpdateProfile = useMutation({
         mutationFn: updateProfile,
         mutationKey: ["updateProfile"],
@@ -61,7 +59,6 @@ const Profile = () => {
     const handleFileInputClick = () => {
         fileInputRef?.current?.click()
     }
-
 
     const mutationAddProfileImage = useMutation({
         mutationFn: addProfileImage,

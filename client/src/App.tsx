@@ -23,7 +23,6 @@ const AuthRoute = ({ children }: RouteProps) => {
   const isAuthenticated = !!userInfo;
   return isAuthenticated ? <Navigate to="/chat" /> : children
 }
-''
 
 function App() {
   const { userInfo, setUserInfo } = useAuthStore();
@@ -48,7 +47,6 @@ function App() {
   if (isLoading) {
     return <div>Carregando...</div>
   }
-
 
   return (
     <BrowserRouter>

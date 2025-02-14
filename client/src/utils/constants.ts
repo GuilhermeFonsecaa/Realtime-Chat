@@ -21,6 +21,7 @@ export const GET_ALL_MESSAGES_ROUTE = `${MESSAGE_ROUTE}/get-messages`;
 export const UPLOAD_FILE_ROUTE = `${MESSAGE_ROUTE}/upload-file`;
 
 export const CHANNEL_ROUTE = `api/channel`;
-export const CREATE_CHANNEL = `${CHANNEL_ROUTE}/create`
+export const CREATE_CHANNEL = `${CHANNEL_ROUTE}/create`;
+export const GET_USER_CHANNELS_ROUTE = `${CHANNEL_ROUTE}/user-channels`;
 
 export const queryClient = new QueryClient();

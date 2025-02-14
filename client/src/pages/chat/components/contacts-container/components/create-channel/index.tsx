@@ -29,7 +29,7 @@ import { toast } from "sonner";
 
 interface memberProps {
     _id: string;
-    firstName: string; // Pegando apenas o primeiro nome
+    firstName: string; 
     lastName: string;
     email: string;
 }
@@ -65,10 +65,10 @@ const CreateChannel = () => {
     })
 
     const onSubmitCreateNewChannel = () => {
-        const members = form.getValues("members") as memberProps[]; // Garante que o TypeScript reconheça a estrutura completa dos membros
+        const members = form.getValues("members") as memberProps[]; 
 
         mutationCreateNewChannel.mutate({
-            members: members.map(({ _id }) => ({ _id })), // Apenas os IDs são enviados para a API
+            members: members.map(({ _id }) => ({ _id })), 
             name: form.getValues("name")
         });
     };
