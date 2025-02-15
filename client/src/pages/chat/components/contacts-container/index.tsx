@@ -8,6 +8,7 @@ import ContactsList from "../contacts-list";
 import { LoaderCircle } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import CreateChannel from "./components/create-channel";
+import { userChannels } from "@/hooks/userChannels";
 
 const ContactsContainer = () => {
 
@@ -16,10 +17,27 @@ const ContactsContainer = () => {
     queryFn: getContacts,
   });
 
+  const { data: dataUserChannels, isLoading: isLoadingUserChannels } = useQuery({
+    queryKey: ["get-channels"],
+    queryFn: userChannels
+  })
+
   if (isLoading) {
     return <div><LoaderCircle className="animate-spin" /></div>;
   }
 
+  if (isLoadingUserChannels) {
+    return <div><LoaderCircle className="animate-spin" /></div>;
+  }
+  
+  const adaptedChannels = dataUserChannels.channels.map((channel) => ({
+    _id: channel._id,
+    color: 0,
+    email: "", // Não aplicável para canais
+    image: "", // Não aplicável para canais
+    firstName: channel.name, // Usar o nome do canal como firstName
+    lastName: "", // Não aplicável para canais
+  }));
 
   return (
     <div className="relative  bg-[#181920] border-r-2 border-[#2f303b]">
@@ -31,8 +49,8 @@ const ContactsContainer = () => {
             <NavigationTitle text="Conversas Privadas" />
             <PrivateConversations />
           </div>
-          <div className="max-h-[38vh]  w-full">
-            <ScrollArea className="h-[240px] w-full">
+          <div className="max-h-[42vh]  w-full">
+            <ScrollArea className="h-[33vh] w-full">
               <ContactsList contacts={data.contacts} isChannel={false} />
             </ScrollArea>
           </div>
@@ -40,7 +58,12 @@ const ContactsContainer = () => {
 
         <div className="flex items-center my-5 justify-between pr-10">
           <NavigationTitle text="Grupos" />
-          <CreateChannel/>
+          <CreateChannel />
+        </div>
+        <div className="max-h-[42vh]  w-full">
+          <ScrollArea className="h-[33vh] w-full">
+            <ContactsList contacts={adaptedChannels} isChannel={true} />
+          </ScrollArea>
         </div>
         <div>
           <ProfileInfo />

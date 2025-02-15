@@ -26,10 +26,11 @@ import { Button } from "@/components/ui/button";
 import MultipleSelector from "@/components/ui/multiple-selector";
 import { createChannel } from "@/hooks/createChannel";
 import { toast } from "sonner";
+import { queryClient } from "@/utils/constants";
 
 interface memberProps {
     _id: string;
-    firstName: string; 
+    firstName: string;
     lastName: string;
     email: string;
 }
@@ -51,6 +52,9 @@ const CreateChannel = () => {
                 toast.success("Grupo criado com sucesso", { className: "bg-orange-500 text-white" });
                 addChannel(response.data.channel);
                 setOpenDialog(false);
+                form.reset();
+                queryClient.invalidateQueries({ queryKey: ["get-channels"] });
+                queryClient.invalidateQueries({ queryKey: ["users-channel"] });
             }
         },
         onError: (error: any) => {
@@ -65,10 +69,10 @@ const CreateChannel = () => {
     })
 
     const onSubmitCreateNewChannel = () => {
-        const members = form.getValues("members") as memberProps[]; 
+        const members = form.getValues("members") as memberProps[];
 
         mutationCreateNewChannel.mutate({
-            members: members.map(({ _id }) => ({ _id })), 
+            members: members.map(({ _id }) => ({ _id })),
             name: form.getValues("name")
         });
     };
@@ -80,7 +84,7 @@ const CreateChannel = () => {
     }
 
     return (
-        <div>
+        <div className="h-full">
             <Dialog open={openDialog} onOpenChange={setOpenDialog}>
                 <DialogTrigger>
 
@@ -96,7 +100,7 @@ const CreateChannel = () => {
                     </TooltipProvider>
 
                 </DialogTrigger>
-                <DialogContent className="bg-[#181920] border-none text-white md:w-[400px] md:h-[400px] lg:w-[400px] lg:h-[500px] xl:w-[700px] xl:max-w-[900px] xl:h-[400px] 2xl:min-w-[650px] 2xl:h-[430px] 2xl:max-h-[700px]  flex flex-col">
+                <DialogContent className="min-h-96 bg-[#181920] border-none text-white 2xl:min-w-[650px] 2xl:max-h-[450px] flex flex-col ">
                     <DialogHeader>
                         <DialogTitle>Criar Grupo</DialogTitle>
                         <DialogDescription>
@@ -104,65 +108,70 @@ const CreateChannel = () => {
                         </DialogDescription>
                     </DialogHeader>
                     <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmitCreateNewChannel)} className="xl:mt-3 2xl:mt-5 gap-7 flex flex-col">
-                            <FormField
-                                control={form.control}
-                                name="name"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Nome</FormLabel>
-                                        <FormControl>
-                                            <Input type="text" className="py-5" placeholder="Digite o nome do grupo" {...field} />
-                                        </FormControl>
+                        <form onSubmit={form.handleSubmit(onSubmitCreateNewChannel)} className="flex flex-col">
+                            <div className="flex flex-col gap-20">
+                                <div className="flex flex-col gap-5">
+                                    <FormField
+                                        control={form.control}
+                                        name="name"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Nome</FormLabel>
+                                                <FormControl>
+                                                    <Input type="text" className="py-5" placeholder="Digite o nome do grupo" {...field} />
+                                                </FormControl>
 
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="members"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Contatos</FormLabel>
-                                        <FormControl>
-                                            <MultipleSelector
-                                                className="text-white"
-                                                defaultOptions={data?.contacts.filter(
-                                                    (member: memberProps) => !field.value.some((selected: memberProps) => selected._id === member._id)
-                                                )}
-                                                placeholder="Selecione os Contatos"
-                                                emptyIndicator={
-                                                    data?.contacts.length === 0 ? (
-                                                        <p>Nenhum contato disponível</p>
-                                                    ) : (
-                                                        <p>Nenhum resultado encontrado</p>
-                                                    )
-                                                }
-                                                value={field.value.map((contact: memberProps) => ({
-                                                    value: contact._id,
-                                                    label: `${contact.firstName} ${contact.lastName}`,
-                                                }))}
-                                                onChange={(selected) => {
-                                                    const newContacts = selected.map((option) => ({
-                                                        _id: option.value,
-                                                        firstName: option.label.split(" ")[0],
-                                                        lastName: option.label.split(" ").slice(1).join(" "),
-                                                        email: data?.contacts.find((c: memberProps) => c._id === option.value)?.email || "",
-                                                    }));
-                                                    field.onChange(newContacts);
-                                                }}
-                                            />
-                                        </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="members"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Contatos</FormLabel>
+                                                <FormControl>
+                                                    <MultipleSelector
+                                                        className="text-white"
+                                                        defaultOptions={data?.contacts.filter(
+                                                            (member: memberProps) => !field.value?.some((selected: memberProps) => selected._id === member._id)
+                                                        )}
+                                                        placeholder="Selecione os Contatos"
+                                                        emptyIndicator={
+                                                            data?.contacts.length === 0 ? (
+                                                                <p>Nenhum contato disponível</p>
+                                                            ) : (
+                                                                <p>Nenhum resultado encontrado</p>
+                                                            )
+                                                        }
+                                                        value={field.value?.map((contact: memberProps) => ({
+                                                            value: contact._id,
+                                                            label: `${contact.firstName} ${contact.lastName}`,
+                                                        })) || []}
+                                                        onChange={(selected) => {
+                                                            const newContacts = selected.map((option) => ({
+                                                                _id: option.value,
+                                                                firstName: option.label.split(" ")[0],
+                                                                lastName: option.label.split(" ").slice(1).join(" "),
+                                                                email: data?.contacts.find((c: memberProps) => c._id === option.value)?.email || "",
+                                                            }));
+                                                            field.onChange(newContacts);
+                                                        }}
+                                                    />
+                                                </FormControl>
 
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-
-                            <Button disabled={mutationCreateNewChannel.isPending} className="w-full bg-orange-500 hover:bg-orange-600 h-10 xl:mt-8" type="submit">
-                                {mutationCreateNewChannel.isPending ? <LoaderCircle className="animate-spin" /> : "Criar Grupo"}
-                            </Button>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+                                <div>
+                                    <Button disabled={mutationCreateNewChannel.isPending} className="w-full bg-orange-500 hover:bg-orange-600 h-10" type="submit">
+                                        {mutationCreateNewChannel.isPending ? <LoaderCircle className="animate-spin" /> : "Criar Grupo"}
+                                    </Button>
+                                </div>
+                            </div>
                         </form>
                     </Form>
                 </DialogContent>

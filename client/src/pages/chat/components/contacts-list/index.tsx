@@ -75,10 +75,10 @@ const ContactsList = ({ contacts, isChannel }: ContactsListProps) => {
                     </div>
                 ))
             ) : (
-                <p>Nenhum contato disponível.</p>
+                <p  className="flex items-center justify-start">Nenhum resultado.</p>
             )}
         </div>
     );
-}
+};
 
 export default ContactsList;
