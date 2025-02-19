@@ -1,8 +1,10 @@
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { downloadFileHook } from "@/hooks/downloadFile";
 import { getMessages } from "@/hooks/getMessages";
-import { useChatStore } from "@/store";
+import { getColor } from "@/lib/utils";
+import { useAuthStore, useChatStore } from "@/store";
 import { Message } from "@/store/slice/chat-slice";
 import { HOST } from "@/utils/constants";
 import { useQuery } from "@tanstack/react-query";
@@ -18,6 +20,7 @@ interface ApiResponse {
 
 const MessageContainer = () => {
     const { selectedChatType, selectedChatData, selectedChatMessages, setSelectedChatMessages } = useChatStore();
+    const { userInfo } = useAuthStore();
     const [fileUrl, setFileUrl] = useState<string | undefined>(undefined);
     const [showImage, setShowImage] = useState<boolean>(false);
     const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
@@ -33,12 +36,12 @@ const MessageContainer = () => {
     });
 
     const { data: dataDownload, isLoading: isLoadingDownload, isError: isErrorDownload, isSuccess: isSuccessDownload } = useQuery({
-        queryKey: ["download-file", fileUrl,downloadKey],
+        queryKey: ["download-file", fileUrl, downloadKey],
         queryFn: () => fileUrl && downloadFileHook(fileUrl, (progress) => {
             setProgress(progress);
             if (progress === 100) {
                 setTimeout(() => setShowProgress(false), 500);
-                setTimeout(() => setProgress(0), 1000); 
+                setTimeout(() => setProgress(0), 1000);
             }
         }),
         enabled: !!fileUrl,
@@ -52,8 +55,8 @@ const MessageContainer = () => {
     }, [isSuccess, data, setSelectedChatMessages, selectedChatData?._id]);
 
     const handleDownload = (url: string) => {
-        setProgress(0);  
-        setShowProgress(true); 
+        setProgress(0);
+        setShowProgress(true);
         setDownloadKey(prevKey => prevKey + 1);  // Forçar a reexecução da query
         setFileUrl(url);
     };
@@ -95,6 +98,8 @@ const MessageContainer = () => {
                         if (showDate) {
                             lastDisplayedDate = messageDate;
                         }
+
+                        const isSender = typeof message.sender === 'object' && '_id' in message.sender && message.sender._id === userInfo?.id;
 
                         return (
                             <div key={message._id}>
@@ -152,6 +157,76 @@ const MessageContainer = () => {
                                         <div className="text-xs text-gray-600">
                                             {moment(message.timestamp).format("HH:mm")}
                                         </div>
+                                    </div>
+                                )}
+
+                                {selectedChatType === "channel" && (
+                                    <div className={`flex flex-col mt-5 gap-3 w-full  ${isSender && message.messageType === "text" ? "text-right" : "text-left"} ${isSender && message.messageType === "file" && "items-end"}`}>
+
+                                        <div>
+                                            {message.messageType === "text" && (
+                                                <div className={`${isSender ? "bg-orange-500 text-white border-orange-700 text-center" : "text-center bg-[#2a2b33]/5 text-white/80 border-[#fffff]/20"} border inline-block p-4 rounded my-1 max-w-[50%] break-words`}>
+                                                    {message.content}
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        {message.messageType === "file" && (
+                                            <div className={`${isSender ? "text-white border-orange-500 w-[20%]" : "bg-[#2a2b33]/5 text-white/80 border-[#fffff]/20"} border inline-block p-4 rounded my-1 w-[20%] max-w-[50%] break-words`}>
+                                                {checkIfImage(message.fileUrl || "") ? (
+                                                    <div className="cursor-pointer" onClick={() => {
+                                                        if (message.fileUrl) {
+                                                            setShowImage(true);
+                                                            setImageUrl(message.fileUrl);
+                                                        }
+                                                    }}>
+                                                        <img src={`${HOST}/${message.fileUrl}`} height={300} width={300} />
+                                                    </div>
+                                                )
+                                                    : (
+                                                        <div className="flex flex-col items-center justify-center">
+                                                            <div className="flex items-center justify-center gap-4">
+                                                                <span className="text-white/80 text-3xl bg-black/20 rounded-full p-2">
+                                                                    <Folder size={19} />
+                                                                </span>
+                                                                <span className="text-sm">{message.fileUrl?.split("/").pop()}</span>
+                                                                <span className="bg-black/20 p-2 text-2xl rounded-full hover:bg-black/50 cursor-pointer transition-all duration-300" onClick={() => {
+                                                                    setShowProgress(true);
+                                                                    handleDownload(message.fileUrl || "");
+                                                                }}>
+                                                                    <ArrowDown size={19} />
+                                                                </span>
+                                                            </div>
+
+                                                            {showProgress &&
+                                                                <Progress className="h-5 w-full border border-emerald-500 mt-3" value={progress} />
+                                                            }
+
+                                                        </div>
+
+                                                    )}
+                                            </div>
+                                        )}
+
+                                        {typeof message.sender === 'object' && '_id' in message.sender && message.sender._id !== userInfo?.id ?
+                                            <div className="flex items-center justify-start gap-3">
+                                                <Avatar className="h-8 w-8 rounded-full overflow-hidden">
+                                                    {message.sender.image ?
+                                                        <AvatarImage src={`${HOST}/${message.sender.image}`} alt="profile" className="object-cover w-full h-full" />
+                                                        :
+                                                        <div className={`flex items-center justify-center uppercase h-8 w-8 text-lg border-[1px] rounded-full ${getColor(message.sender.color ?? 0)}`}>
+                                                            {message.sender.firstName ? message.sender.firstName.split("").shift() : message.sender.email.split("").shift()}
+                                                        </div>
+                                                    }
+                                                </Avatar>
+                                                <span className="text-sm text-white/60">{`${message.sender.firstName} ${message.sender.lastName}`}</span>
+                                                <span className="text-xs text-white/60">{moment(message.timestamp).format("LT")}</span>
+                                            </div>
+                                            :
+                                            <div className="text-xs text-white/60 mt-1">
+                                                {moment(message.timestamp).format("LT")}
+                                            </div>
+                                        }
                                     </div>
                                 )}
                             </div>
