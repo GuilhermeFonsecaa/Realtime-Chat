@@ -6,6 +6,11 @@ export const uploadFile = async (request: Request, response: Response) => {
         if (!request.file) {
             response.status(400).send("Arquivo é obrigatório");
         }
+
+        if (!request.file?.path) {
+            return response.status(400).send("Caminho do arquivo não encontrado");
+        }
+
         const date = Date.now();
         let fileDir = `uploads/files/${date}`
         let fileName = `${fileDir}/${request.file?.originalname}`;

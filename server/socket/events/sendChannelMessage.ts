@@ -4,7 +4,7 @@ import Message from "../../models/MessagesModel";
 import Channel from "../../models/ChannelModel";
 import { Server as SocketIOServer } from "socket.io"
 
-export interface sendMessageProps {
+export interface sendChannelMessageProps {
     channelId: string;
     sender: mongoose.Schema.Types.ObjectId; //user.id de sender
     content: string;
@@ -12,7 +12,7 @@ export interface sendMessageProps {
     fileUrl: string | undefined
 }
 
-export const sendChannelMessage = async (message: sendMessageProps, userSocketMap: Map<any, any>, io: SocketIOServer) => {
+export const sendChannelMessage = async (message: sendChannelMessageProps, userSocketMap: Map<any, any>, io: SocketIOServer) => {
     const { channelId, sender, content, messageType, fileUrl } = message;
 
     const createdMessage = await Message.create({
@@ -40,11 +40,11 @@ export const sendChannelMessage = async (message: sendMessageProps, userSocketMa
             if (memberSocketId) {
                 io.to(memberSocketId).emit("recieve-channel-message", finalData)
             }
-            const adminSocketId = userSocketMap.get(channel.admin._id.toString());
-            if (adminSocketId) {
-                io.to(adminSocketId).emit("recieve-channel-message", finalData);
-            }
-        })
+        });
+        const adminSocketId = userSocketMap.get(channel.admin._id.toString());
+        if (adminSocketId) {
+            io.to(adminSocketId).emit("recieve-channel-message", finalData);
+        }
     }
-
 };
+
