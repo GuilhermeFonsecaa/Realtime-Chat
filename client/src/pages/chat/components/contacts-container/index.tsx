@@ -4,7 +4,7 @@ import NavigationTitle from "./components/navigation-title";
 import PrivateConversations from "./components/private-conversations";
 import ProfileInfo from "./components/profile-info";
 import { getContacts } from "@/hooks/getContacts";
-import ContactsList from "../contacts-list";
+import ContactsList from "./components/contacts-list";
 import { LoaderCircle } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import CreateChannel from "./components/create-channel";
@@ -49,18 +49,18 @@ const ContactsContainer = () => {
             <NavigationTitle text="Conversas Privadas" />
             <PrivateConversations />
           </div>
-          <div className="max-h-[42vh]  w-full">
+          <div className="max-h-[42vh] w-full">
             <ScrollArea className="h-[33vh] w-full">
               <ContactsList contacts={data.contacts} isChannel={false} />
             </ScrollArea>
           </div>
         </div>
 
-        <div className="flex items-center my-5 justify-between pr-10">
+        <div className="flex items-center justify-between pr-10">
           <NavigationTitle text="Grupos" />
           <CreateChannel />
         </div>
-        <div className="max-h-[42vh]  w-full">
+        <div className="max-h-[42vh] w-full">
           <ScrollArea className="h-[33vh] w-full">
             <ContactsList contacts={adaptedChannels} isChannel={true} />
           </ScrollArea>

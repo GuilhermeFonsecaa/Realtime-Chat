@@ -3,12 +3,15 @@ import { StateCreator } from "zustand";
 export interface Message {
   _id: string
   content: string;
-  recipient: { _id: string } | string;
-  sender: { _id: string } | string;
+  recipient: { _id: string } | string | null;
+  sender: SelectedChatDataProps | string;
   timestamp: Date;
   messageType: string
   fileUrl?: string
+  channelId?: string;
 }
+
+
 
 export interface SelectedChatDataProps {
   _id: string;

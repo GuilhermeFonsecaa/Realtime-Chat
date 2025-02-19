@@ -44,6 +44,10 @@ const CreateChannel = () => {
         queryKey: ["get-all-contacts"]
     })
 
+    const form = useForm({
+        resolver: zodResolver(createChannelSchema),
+    })
+
     const mutationCreateNewChannel = useMutation({
         mutationKey: ["create-channel"],
         mutationFn: createChannel,
@@ -62,10 +66,6 @@ const CreateChannel = () => {
                 toast.error(error.response.data.message);
             }
         }
-    })
-
-    const form = useForm({
-        resolver: zodResolver(createChannelSchema),
     })
 
     const onSubmitCreateNewChannel = () => {

@@ -34,9 +34,19 @@ const MessageBar = () => {
                 recipient: selectedChatData?._id,
                 messageType: "text",
                 fileUrl: undefined
-            })
+            });
             queryClient.invalidateQueries({ queryKey: ["get-contacts"] });
             setMessage("");
+        };
+        if (selectedChatType === "channel" && userInfo) {
+            socket?.emit("send-channel-message", {
+                sender: userInfo.id,
+                content: message,
+                messageType: "text",
+                fileUrl: undefined,
+                channelId: selectedChatData?._id
+            });
+            setMessage("")
         };
     };
 
@@ -59,6 +69,16 @@ const MessageBar = () => {
                         fileUrl: response.data.filePath,
                     });
                     queryClient.invalidateQueries({ queryKey: ["get-contacts"] });
+                };
+
+                if (selectedChatType === "channel" && userInfo) {
+                    socket?.emit("send-channel-message", {
+                        sender: userInfo.id,
+                        content: undefined,
+                        messageType: "file",
+                        fileUrl: response.data.filePath,
+                        channelId: selectedChatData?._id
+                    });
                 };
                 toast.success("Arquivo carregado com sucesso", { className: "bg-orange-500 text-white" });
             }
