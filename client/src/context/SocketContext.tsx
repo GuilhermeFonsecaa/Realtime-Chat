@@ -26,10 +26,10 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
                 console.log("Conectado ao servidor socket");
             });
 
-            const handleReceiveMessage = (message: Message) => {
+            const handleRecieveMessage = (message: Message) => {
                 const { selectedChatData, selectedChatType, addMessage } = useChatStore.getState();
                 const senderId = typeof message.sender === "object" && message.sender !== null && message.sender._id;
-                const recipientId = typeof message.recipient === "object" && message.recipient !== null && message.recipient._id ;
+                const recipientId = typeof message.recipient === "object" && message.recipient !== null && message.recipient._id;
 
                 if (
                     (selectedChatType !== undefined && selectedChatData && selectedChatData._id === senderId) ||
@@ -39,7 +39,18 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
                 }
             };
 
-            newSocket.on("recieveMessage", handleReceiveMessage);
+            const handleRecieveChannelMessage = (message: Message) => {
+                const { selectedChatData, selectedChatType, addMessage } = useChatStore.getState();
+
+                if (
+                    (selectedChatType !== undefined && selectedChatData && selectedChatData._id === message.channelId)
+                ) {
+                    addMessage(message);
+                }
+            };
+
+            newSocket.on("recieveMessage", handleRecieveMessage);
+            newSocket.on("recieve-channel-message", handleRecieveChannelMessage);
 
             return () => {
                 newSocket.disconnect();
