@@ -9,27 +9,33 @@ import { LoaderCircle } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import CreateChannel from "./components/create-channel";
 import { userChannels } from "@/hooks/userChannels";
+import { useEffect } from "react";
+import { useChatStore } from "@/store";
 
 const ContactsContainer = () => {
+
+  const { setChannels } = useChatStore();
 
   const { data, isLoading } = useQuery({
     queryKey: ["get-contacts"],
     queryFn: getContacts,
   });
 
-  const { data: dataUserChannels, isLoading: isLoadingUserChannels } = useQuery({
+  const { data: dataUserChannels, isLoading: isLoadingUserChannels, isSuccess } = useQuery({
     queryKey: ["get-channels"],
     queryFn: userChannels
   })
 
-  if (isLoading) {
+  useEffect(() => {
+    if (isSuccess && dataUserChannels) {
+      setChannels(dataUserChannels.channels);
+    }
+  }, [isSuccess, dataUserChannels, setChannels]);
+
+  if (isLoading || isLoadingUserChannels) {
     return <div><LoaderCircle className="animate-spin" /></div>;
   }
 
-  if (isLoadingUserChannels) {
-    return <div><LoaderCircle className="animate-spin" /></div>;
-  }
-  
   const adaptedChannels = dataUserChannels.channels.map((channel) => ({
     _id: channel._id,
     color: 0,
@@ -37,7 +43,7 @@ const ContactsContainer = () => {
     image: "", // Não aplicável para canais
     firstName: channel.name, // Usar o nome do canal como firstName
     lastName: "", // Não aplicável para canais
-  }));
+  })) || [];
 
   return (
     <div className="relative  bg-[#181920] border-r-2 border-[#2f303b]">
@@ -51,7 +57,7 @@ const ContactsContainer = () => {
           </div>
           <div className="max-h-[42vh] w-full">
             <ScrollArea className="h-[33vh] w-full">
-              <ContactsList contacts={data.contacts} isChannel={false} />
+              <ContactsList contacts={data.contacts || []} isChannel={false} />
             </ScrollArea>
           </div>
         </div>
@@ -61,7 +67,7 @@ const ContactsContainer = () => {
           <CreateChannel />
         </div>
         <div className="max-h-[42vh] w-full">
-          <ScrollArea className="h-[33vh] w-full">
+          <ScrollArea className="h-[29vh] w-full pb-3">
             <ContactsList contacts={adaptedChannels} isChannel={true} />
           </ScrollArea>
         </div>
