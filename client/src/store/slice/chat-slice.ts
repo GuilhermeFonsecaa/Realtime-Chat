@@ -11,8 +11,6 @@ export interface Message {
   channelId?: string;
 }
 
-
-
 export interface SelectedChatDataProps {
   _id: string;
   email: string;
@@ -35,6 +33,7 @@ export interface ChatSlice {
   setChannels: (channel: any) => void;
   addChannel: (channel: any) => void;
   addMessage: (message: Message) => void;
+  addChannelInChannelList: (message: Message) => void
 }
 
 export const createChatSlice: StateCreator<ChatSlice> = (set, get) => ({
@@ -49,7 +48,7 @@ export const createChatSlice: StateCreator<ChatSlice> = (set, get) => ({
   setChannels: (channels) => set({ channels }),
   addChannel: (channel) => {
     const channels = get().channels;
-    set({channels: [channel, ...channels]});
+    set({ channels: [channel, ...channels] });
   },
   addMessage: (message) => {
     const selectedChatMessages = get().selectedChatMessages;
@@ -68,5 +67,18 @@ export const createChatSlice: StateCreator<ChatSlice> = (set, get) => ({
         }
       ]
     })
+  },
+  addChannelInChannelList: (message) => {
+    const channels = get().channels;
+    console.log(channels)
+    const data = channels.find(channel => channel._id === message.channelId);
+    const index = channels.findIndex((channel) => channel._id === message.channelId);
+    console.log(data)
+    console.log(index)
+    //Se o channel for encontrado -> findIndex retorna -1 quando o elemento não é encontrado.
+    if (index !== -1 && index !== undefined) {
+      channels.splice(index, 1); //remove o channel da posição atual
+      channels.unshift(data); //adiciona o canal ao ínicio da lista
+    }
   }
 });
