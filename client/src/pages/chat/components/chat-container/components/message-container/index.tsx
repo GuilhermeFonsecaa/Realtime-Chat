@@ -2,6 +2,7 @@ import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { downloadFileHook } from "@/hooks/downloadFile";
+import { getChannelMessages } from "@/hooks/getChannelMessages";
 import { getMessages } from "@/hooks/getMessages";
 import { getColor } from "@/lib/utils";
 import { useAuthStore, useChatStore } from "@/store";
@@ -31,7 +32,13 @@ const MessageContainer = () => {
 
     const { data, isLoading, isSuccess } = useQuery<ApiResponse>({
         queryKey: ["get-messages", selectedChatData?._id],
-        queryFn: selectedChatData?._id ? () => getMessages(selectedChatData?._id) : undefined,
+        queryFn: selectedChatData?._id && selectedChatType === "contact" ? () => getMessages(selectedChatData?._id) : undefined,
+        retry: false
+    });
+
+    const { data: dataChannelMessages, isLoading: isLoadingChannelMessages, isSuccess: isSuccessChannelMessages } = useQuery<ApiResponse>({
+        queryKey: ["get-messages-channel", selectedChatData?._id],
+        queryFn: selectedChatData?._id && selectedChatType === "channel" ? () => getChannelMessages(selectedChatData?._id) : undefined,
         retry: false
     });
 
@@ -49,10 +56,16 @@ const MessageContainer = () => {
     });
 
     useEffect(() => {
-        if (isSuccess && data && Array.isArray(data.messages)) {
+        if (isSuccess && data && Array.isArray(data.messages) && selectedChatType==="contact") {
             setSelectedChatMessages(data.messages);
         }
     }, [isSuccess, data, setSelectedChatMessages, selectedChatData?._id]);
+
+    useEffect(() => {
+        if (isSuccessChannelMessages && dataChannelMessages && Array.isArray(dataChannelMessages.messages) && selectedChatType==="channel") {
+            setSelectedChatMessages(dataChannelMessages.messages);
+        }
+    }, [isSuccessChannelMessages, dataChannelMessages, setSelectedChatMessages, selectedChatData?._id]);
 
     const handleDownload = (url: string) => {
         setProgress(0);
@@ -86,6 +99,11 @@ const MessageContainer = () => {
     }
 
     if (isLoading) return <div>Carregando <LoaderCircle className="animate-spin" /></div>;
+
+    if (isLoadingChannelMessages) {
+        <div>Carregando <LoaderCircle className="animate-spin" /></div>
+    }
+
 
     return (
         <div className="flex-1 overflow-y-auto p-4 px-8 md:w-[65vw] lg:w-[70vw] xl:w-[77vw] w-full">
