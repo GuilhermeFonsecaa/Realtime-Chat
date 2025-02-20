@@ -40,13 +40,14 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
             };
 
             const handleRecieveChannelMessage = (message: Message) => {
-                const { selectedChatData, selectedChatType, addMessage } = useChatStore.getState();
+                const { selectedChatData, selectedChatType, addMessage, addChannelInChannelList } = useChatStore.getState();
 
                 if (
                     (selectedChatType !== undefined && selectedChatData && selectedChatData._id === message.channelId)
                 ) {
                     addMessage(message);
                 }
+                addChannelInChannelList(message)
             };
 
             newSocket.on("recieveMessage", handleRecieveMessage);
