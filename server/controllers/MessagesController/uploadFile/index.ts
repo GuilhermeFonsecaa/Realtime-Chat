@@ -8,7 +8,7 @@ export const uploadFile = async (request: Request, response: Response) => {
         }
 
         if (!request.file?.path) {
-            return response.status(400).send("Caminho do arquivo não encontrado");
+             response.status(400).send("Caminho do arquivo não encontrado");
         }
 
         const date = Date.now();

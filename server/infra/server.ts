@@ -29,7 +29,6 @@ app.use("/uploads/files", express.static("uploads/files")); //disponibiliza arqu
 app.use("/api/auth", authRoutes);
 app.use("/api/contacts", contactsRoutes);
 app.use("/api/messages", messagesRoutes);
-
 app.use("/api/channel", channelRoutes)
 
 if (!databaseURL) {
