@@ -6,7 +6,7 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover"
 import { Paperclip, SendHorizonal, SmilePlus } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import EmojiPicker, { Theme } from "emoji-picker-react"
 import { useAuthStore, useChatStore } from "@/store";
 import { useSocket } from "@/context/SocketContext";
@@ -97,6 +97,12 @@ const MessageBar = () => {
             mutationUploadFile.mutate(file)
         }
     }
+
+    useEffect(() => {
+        if (selectedChatData?._id) {
+            setMessage("")
+        }
+    }, [selectedChatData?._id])
 
     return (
         <div className="h-[10vh] bg-[rgb(28,29,37)] flex justify-center items-center px-8 mb-6 gap-6" >
